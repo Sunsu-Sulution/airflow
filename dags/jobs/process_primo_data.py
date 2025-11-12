@@ -4,9 +4,8 @@ from airflow.sdk import task
 from time import tzset
 from util.s3 import S3Client
 from util.chrome import Chrome
-import pandas as pd
-
 from sqlalchemy import create_engine
+import pandas as pd
 import os
 
 tzset()
