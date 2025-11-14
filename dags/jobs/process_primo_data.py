@@ -10,7 +10,7 @@ import pandas as pd
 import os
 
 tzset()
-schedule = "9 0 * * *"
+schedule = "0 20 * * *"
 
 
 with DAG(

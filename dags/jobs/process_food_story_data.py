@@ -11,7 +11,7 @@ from util.chrome import Chrome
 from util.format import to_datetime_series, to_str_id_like
 
 time.tzset()
-schedule = "9 0 * * *"
+schedule = "0 20 * * *"
 
 
 with DAG(
