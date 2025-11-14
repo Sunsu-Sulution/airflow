@@ -5,29 +5,13 @@ from time import tzset
 from util.s3 import S3Client
 from util.chrome import Chrome
 from sqlalchemy import create_engine
+from util.format import to_datetime_series, to_str_id_like
 import pandas as pd
 import os
 
 tzset()
-
 schedule = "9 0 * * *"
 
-def to_datetime_series(s, dayfirst=True):
-    return pd.to_datetime(s, dayfirst=dayfirst, errors="coerce")
-
-def to_str_id_like(x):
-    if pd.isna(x):
-        return None
-    if isinstance(x, str):
-        xs = x.strip()
-        return xs if xs != "" else None
-    try:
-        f = float(x)
-    except Exception:
-        return str(x)
-    if f.is_integer():
-        return str(int(f))
-    return str(x)
 
 with DAG(
     dag_id="process_primo_data",
@@ -37,7 +21,6 @@ with DAG(
     schedule=schedule,
 ) as dag:
     s3_client = S3Client()
-    chrome = Chrome()
     now = datetime.today()
     yesterday = now - timedelta(days=1)
     bucket_name = "bearhouse-crm-primo"
@@ -185,7 +168,7 @@ with DAG(
         finally:
             engine.dispose()
 
-    @task
+    @task()
     def process_primo_member_point_on_hand():
         prefix = (
             f"prod/report/"
@@ -226,6 +209,5 @@ with DAG(
             print(f"Wrote {len(df)} rows to {table_name}")
         finally:
             engine.dispose()
-
 
     process_primo_memberships() >> process_primo_coupons() >> process_primo_member_tier_movement() >> process_primo_member_point_on_hand()
