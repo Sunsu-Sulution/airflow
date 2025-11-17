@@ -15,13 +15,13 @@ time.tzset()
 schedule = "0 6 * * *"
 
 
-with ((DAG(
+with DAG(
     dag_id="process_food_story_data",
     description="Process Food Story Data",
     start_date=datetime.now() - timedelta(days=1),
     tags=["Food Story"],
     schedule=schedule,
-) as dag)):
+) as dag:
     now = datetime.today()
     yesterday = now - timedelta(days=1)
 
