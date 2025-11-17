@@ -121,6 +121,7 @@ services:
 
   airflow-worker:
     <<: *airflow-common
+    container_name: airflow-worker
     command: celery worker
     healthcheck:
       test:
@@ -133,6 +134,7 @@ services:
     environment:
       <<: *airflow-common-env
       DUMB_INIT_SETSID: "0"
+      AIRFLOW__CELERY__WORKER_LOG_SERVER_PORT: '8793'
     restart: always
     depends_on:
       <<: *airflow-common-depends-on
@@ -140,6 +142,8 @@ services:
         condition: service_healthy
       airflow-init:
         condition: service_completed_successfully
+    ports:
+      - "8793:8793"
     networks:
       - airflow_network
 
