@@ -49,7 +49,7 @@ with DAG(
 
         for c in date_cols:
             if c in df.columns:
-                df[c] = pd.to_datetime(df[c], format="%m-%d-%Y", errors="coerce")
+                df[c] = to_datetime_series(df[c], dayfirst=False)
 
         for c in str_cols:
             if c in df.columns:
@@ -66,6 +66,8 @@ with DAG(
                 ),
                 axis=1
             )
+        df['payment_date'] = df['payment_date'].dt.date
+        print(df)
 
         try:
             df.to_sql(name=table_name, con=engine, if_exists="append", index=False, method="multi", chunksize=1000)
@@ -76,7 +78,6 @@ with DAG(
     @task
     def process_promotions():
         df = get_food_story_promotions(yesterday)
-        print(df)
 
         database_url = os.environ.get("DATABASE_URL")
         table_name = "food_story_promotion"
@@ -98,14 +99,15 @@ with DAG(
 
         for c in date_cols:
             if c in df.columns:
-                df[c] = to_datetime_series(df[c], dayfirst=True)
+                df[c] = to_datetime_series(df[c], dayfirst=False)
+        df['payment_date'] = df['payment_date'].dt.date
 
         for c in str_cols:
             if c in df.columns:
                 df[c] = df[c].apply(to_str_id_like)
 
         df["void"] = df["void"] == "Y"
-
+        print(df)
         try:
             df.to_sql(name=table_name, con=engine, if_exists="append", index=False, method="multi", chunksize=1000)
             print(f"Wrote {len(df)} rows to {table_name}")
