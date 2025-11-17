@@ -9,18 +9,19 @@ from util.chrome import Chrome
 from util.s3 import S3Client
 from util.chrome import Chrome
 from util.format import to_datetime_series, to_str_id_like
+import pandas as pd
 
 time.tzset()
 schedule = "0 6 * * *"
 
 
-with (DAG(
+with ((DAG(
     dag_id="process_food_story_data",
     description="Process Food Story Data",
     start_date=datetime.now() - timedelta(days=1),
     tags=["Food Story"],
     schedule=schedule,
-) as dag):
+) as dag)):
     now = datetime.today()
     yesterday = now - timedelta(days=1)
 
@@ -48,7 +49,7 @@ with (DAG(
 
         for c in date_cols:
             if c in df.columns:
-                df[c] = to_datetime_series(df[c], dayfirst=True)
+                df[c] = pd.to_datetime(df[c], format="%m-%d-%Y", errors="coerce")
 
         for c in str_cols:
             if c in df.columns:
