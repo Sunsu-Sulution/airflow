@@ -18,4 +18,4 @@ RUN chromium --version
 
 USER airflow
 
-RUN pip install --no-cache-dir selenium webdriver-manager boto3
+RUN pip install --no-cache-dir selenium webdriver-manager boto3 requests

@@ -9,6 +9,7 @@ from util.chrome import Chrome
 from util.s3 import S3Client
 from util.chrome import Chrome
 from util.format import to_datetime_series, to_str_id_like
+from util.handler_error import handle_error
 import pandas as pd
 
 time.tzset()
@@ -25,7 +26,8 @@ with DAG(
     now = datetime.today()
     yesterday = now - timedelta(days=1)
 
-    @task
+    @task()
+    @handle_error
     def process_bill_detail():
         df = get_food_story_bills_detail(yesterday)
         print(df)
@@ -75,7 +77,8 @@ with DAG(
         finally:
             engine.dispose()
 
-    @task
+    @task()
+    @handle_error
     def process_promotions():
         df = get_food_story_promotions(yesterday)
 

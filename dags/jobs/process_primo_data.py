@@ -6,6 +6,7 @@ from util.s3 import S3Client
 from util.chrome import Chrome
 from sqlalchemy import create_engine
 from util.format import to_datetime_series, to_str_id_like
+from util.handler_error import handle_error
 import pandas as pd
 import os
 
@@ -26,6 +27,7 @@ with DAG(
     bucket_name = "bearhouse-crm-primo"
 
     @task()
+    @handle_error
     def process_primo_memberships():
         prefix = (
             f"prod/report/"
@@ -75,6 +77,7 @@ with DAG(
             engine.dispose()
 
     @task()
+    @handle_error
     def process_primo_coupons():
         prefix = (
             f"prod/report/"
@@ -126,6 +129,7 @@ with DAG(
             engine.dispose()
 
     @task()
+    @handle_error
     def process_primo_member_tier_movement():
         prefix = (
             f"prod/report/"
@@ -169,6 +173,7 @@ with DAG(
             engine.dispose()
 
     @task()
+    @handle_error
     def process_primo_member_point_on_hand():
         prefix = (
             f"prod/report/"

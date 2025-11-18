@@ -17,7 +17,7 @@ with DAG(
 ) as dag:
     now = datetime.today()
 
-    @task
+    @task()
     def process_health_check():
         print(f"health check started form {now}")
         print(f"health check done")
