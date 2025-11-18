@@ -23,7 +23,7 @@ with DAG(
     schedule=schedule,
 ) as dag:
 
-    @task()
+    @task
     def migrate_rocket_data():
         return
         df = pd.read_csv("/downloads/ContactList_Bearhouse_20241105.csv")
@@ -51,7 +51,7 @@ with DAG(
             engine.dispose()
 
 
-    @task()
+    @task
     def migrate_food_story_data():
         return
         df = pd.read_csv("/downloads/users_20251103-161907.csv")
