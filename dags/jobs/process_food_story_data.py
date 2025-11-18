@@ -26,7 +26,7 @@ with DAG(
     now = datetime.today()
     yesterday = now - timedelta(days=1)
 
-    @task()
+    @task
     @handle_error
     def process_bill_detail():
         df = get_food_story_bills_detail(yesterday)
@@ -77,7 +77,7 @@ with DAG(
         finally:
             engine.dispose()
 
-    @task()
+    @task
     @handle_error
     def process_promotions():
         df = get_food_story_promotions(yesterday)

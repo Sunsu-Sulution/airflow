@@ -2,6 +2,7 @@ import time
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.sdk import task
+from util.handler_error import handle_error
 
 
 time.tzset()
@@ -18,6 +19,7 @@ with DAG(
     now = datetime.today()
 
     @task()
+    @handle_error
     def process_health_check():
         print(f"health check started form {now}")
         print(f"health check done")

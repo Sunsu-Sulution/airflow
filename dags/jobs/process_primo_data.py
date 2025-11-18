@@ -26,7 +26,7 @@ with DAG(
     yesterday = now - timedelta(days=1)
     bucket_name = "bearhouse-crm-primo"
 
-    @task()
+    @task
     @handle_error
     def process_primo_memberships():
         prefix = (
@@ -76,7 +76,7 @@ with DAG(
         finally:
             engine.dispose()
 
-    @task()
+    @task
     @handle_error
     def process_primo_coupons():
         prefix = (
@@ -128,7 +128,7 @@ with DAG(
         finally:
             engine.dispose()
 
-    @task()
+    @task
     @handle_error
     def process_primo_member_tier_movement():
         prefix = (
@@ -172,7 +172,7 @@ with DAG(
         finally:
             engine.dispose()
 
-    @task()
+    @task
     @handle_error
     def process_primo_member_point_on_hand():
         prefix = (
