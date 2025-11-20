@@ -8,6 +8,12 @@ class S3Client:
     def __init__(self, region_name='ap-southeast-2'):
         self.s3 = boto3.client('s3', region_name=region_name)
 
+    def list_s3_keys(self, prefix, bucket):
+        paginator = self.s3.get_paginator("list_objects_v2")
+        for page in paginator.paginate(bucket, Prefix=prefix):
+            for obj in page.get("Contents", []):
+                yield obj["Key"]
+
     def upload(self, local_file, bucket_name, s3_key):
         self.s3.upload_file(local_file, bucket_name, s3_key)
         print(f"Uploaded to s3://{bucket_name}/{s3_key}")

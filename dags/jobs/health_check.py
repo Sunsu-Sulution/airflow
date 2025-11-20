@@ -19,7 +19,6 @@ with DAG(
     now = datetime.today()
 
     @task
-    @handle_error
     def process_health_check():
         print(f"health check started form {now}")
         print(f"health check done")

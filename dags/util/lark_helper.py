@@ -1,4 +1,5 @@
 import os, requests, json
+import pandas as pd
 
 
 def get_lark_token():
@@ -44,3 +45,43 @@ def send_message_to_lark(content):
         return response.json()['data']
 
     return None
+
+def get_lark_base_to_df(app_id, table_id, filter_dict):
+    url = f"https://open.larksuite.com/open-apis/bitable/v1/apps/{app_id}/tables/{table_id}/records/search?page_size=500"
+
+    headers = {
+        'Authorization': f'Bearer {get_lark_token()}',
+    }
+    payload = json.dumps({
+        "filter": filter_dict
+    })
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    if response.status_code == 200:
+        items = response.json()['data']['items']
+        rows = []
+        for item in items:
+            fields = item.get("fields", {}) or {}
+            row = {}
+            for key, val in fields.items():
+                if isinstance(val, str):
+                    row[key] = val
+                elif isinstance(val, list) and len(val) > 0:
+                    first = val[0]
+                    if isinstance(first, dict):
+                        row[key] = first.get("text") or first.get("name") or first.get("value") or json.dumps(first,
+                                                                                                              ensure_ascii=False)
+                    else:
+                        row[key] = str(first)
+                elif isinstance(val, dict):
+                    row[key] = val.get("text") or val.get("name") or val.get("value") or json.dumps(val,
+                                                                                                    ensure_ascii=False)
+                else:
+                    row[key] = val
+            rows.append(row)
+
+        df = pd.DataFrame(rows)
+        return df
+
+    raise Exception(response.json())
